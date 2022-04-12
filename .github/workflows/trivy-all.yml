@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       repo_owner: ${{ steps.repo_owner.outputs.lowercase }}
-      os_matrix: "{\"os_version\":[\"bullseye\",\"buster\",\"ubuntu16\",\"ubuntu18\",\"ubuntu20\"]}"
+      os_matrix: "{\"os_version\":[\"ubuntu20\"]}"
     steps:
       - name: Lowercase repo owner
         id: repo_owner
@@ -34,7 +34,7 @@ jobs:
       - name: Run Trivy on indy_node:${{ matrix.os_version }}
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'ghcr.io/${{ needs.workflow_setup.outputs.repo_owner }}/zickau/indy_node:latest-${{ matrix.os_version }}'
+          image-ref: 'ghcr.io/zickau/indy_node:latest-${{ matrix.os_version }}'
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-indy-node-${{ matrix.os_version }}.sarif'
