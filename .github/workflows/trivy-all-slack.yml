@@ -57,3 +57,60 @@ jobs:
         with:
           sarif_file: 'trivy-indy-node-${{ matrix.os_version }}.sarif'
 
+      - name: Run Trivy vulnerability scanner for Slack messages on indy_node:${{ matrix.os_version }}
+        uses: aquasecurity/trivy-action@master
+        with:
+          #image-ref: 'ghcr.io/idunion/indy-node-container/indy_node:latest-ubuntu18'
+          image-ref: 'ghcr.io/zickau/indy_node:latest-${{ matrix.os_version }}'
+          scan-type: 'image'
+          severity: 'HIGH,CRITICAL'
+          ignore-unfixed: true
+          format: json
+          #output: 'results.json'
+          output: 'trivy-indy-node-${{ matrix.os_version }}.json'
+          # Ignoring the go.sum file as it may contain the older dependencies entries which are not being used now.
+          skip-dirs: 'go.sum'
+
+      - name: Read file contents
+        id: read_file
+        uses: andstor/file-reader-action@v1.0.0
+        with:
+          path: "trivy-indy-node-${{ matrix.os_version }}.json"
+      
+      - name: Create Issues Summary
+        run: |
+          summary=$(jq -jr '.Results | .[] | .Vulnerabilities | .[] | select(.Severity=="HIGH" or .Severity=="CRITICAL") | .VulnerabilityID' trivy-indy-node-${{ matrix.os_version }}.json)
+          if [ -z $summary-${{ matrix.os_version }} ]
+          then
+            summary="0 Issues"
+          fi
+          echo "SUMMARY-${{ matrix.os_version }}=$summary" >> $GITHUB_ENV
+
+      - name: Send custom JSON data to Slack workflow
+        id: slack
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+          payload: |
+            {
+              "text": "CVE found: ",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*CVEs (HIGH,CRITICAL) found in ${{ matrix.os_version }}: "
+                }
+              },
+              {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{ env.SUMMARY-${{ matrix.os_version }} }}"
+                }
+              }
+            ]
+            }
+        env:
+           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_SZ }}
+           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
