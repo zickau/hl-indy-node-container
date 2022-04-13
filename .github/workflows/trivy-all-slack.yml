@@ -98,14 +98,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*CVEs (HIGH,CRITICAL) found in ${{ matrix.os_version }}: "
+                    "text": "*CVEs (HIGH,CRITICAL)* found in: ${{ matrix.os_version }}: "
                 }
               },
               {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{ env.SUMMARY-${{ matrix.os_version }} }}"
+                    "text": "env.SUMMARY-${{ matrix.os_version }}"
                 }
               }
             ]
