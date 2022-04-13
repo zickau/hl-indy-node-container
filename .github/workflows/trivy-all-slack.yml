@@ -79,7 +79,7 @@ jobs:
       
       - name: Create Issues Summary
         run: |
-          summary=$(grep -o '"VulnerabilityID": *"[^"]*"' trivy-indy-node-${{ matrix.os_version }}.json | grep -o '"[^"]*"$' | tr -d '\n')
+          summary="grep -o '"VulnerabilityID": *"[^"]*"' trivy-indy-node-${{ matrix.os_version }}.json | grep -o '"[^"]*"$' | tr -d '\n'"
           if [ -z $summary-${{ matrix.os_version }} ]
           then
             summary="0 Issues"
@@ -105,7 +105,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": env.SUMMARY-${{ matrix.os_version }}
+                    "text": "SUMMARY-${{ matrix.os_version }}"
                 }
               }
             ]
