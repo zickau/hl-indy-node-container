@@ -79,7 +79,7 @@ jobs:
       
       - name: Create Issues Summary
         run: |
-          summary=$(grep -o '"VulnerabilityID": *"[^"]*"' trivy-indy-node-${{ matrix.os_version }}.json | grep -o '"[^"]*"$' | tr -d '\n')
+          summary=$(grep -o '"VulnerabilityID": "[^"]*' trivy-indy-node-${{ matrix.os_version }}.json | grep -o '[^"]*$' | tr '\n' ',')
           echo $summary
           if [ -z $summary-${{ matrix.os_version }} ]
           then
