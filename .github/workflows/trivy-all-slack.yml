@@ -85,7 +85,7 @@ jobs:
           then
             summary="0 Issues"
           fi
-          echo "SUMMARY-${{ matrix.os_version }}=$summary" >> $GITHUB_ENV
+          echo "SUMMARY=$summary" >> $GITHUB_ENV
 
       - name: Send custom JSON data to Slack workflow
         id: slack
@@ -106,7 +106,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${summary}"
+                    "text": "${{ env.SUMMARY }}"
                 }
               }
             ]
