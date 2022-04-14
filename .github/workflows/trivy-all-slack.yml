@@ -79,13 +79,13 @@ jobs:
       
       - name: Create Issues Summary
         run: |
-          summary=$(grep -o '"VulnerabilityID": "[^"]*' trivy-indy-node-${{ matrix.os_version }}.json | grep -o '[^"]*$' | tr '\n' ',')
-          summary=echo $summary | sed 's/.$//'
-          if [ -z $summary-${{ matrix.os_version }} ]
+          summary1=$(grep -o '"VulnerabilityID": "[^"]*' trivy-indy-node-${{ matrix.os_version }}.json | grep -o '[^"]*$' | tr '\n' ',')
+          summary2=$(echo $summary1 | sed 's/.$//')
+          if [ -z $summary1 ]
           then
-            summary="0 Issues"
+            summary2="0 Issues"
           fi
-          echo "SUMMARY=$summary" >> $GITHUB_ENV
+          echo "SUMMARY=$summary2" >> $GITHUB_ENV
 
       - name: Send custom JSON data to Slack workflow
         id: slack
