@@ -1,4 +1,4 @@
-name: Trivy Analysis with Slack Messages (indy_node:latest)
+name: Trivy Analysis for Slack Messages (indy_node:latest)
 
 on:
   # schedule:
